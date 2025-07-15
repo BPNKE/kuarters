@@ -5,51 +5,167 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kalkulator Keluasan Kuarters</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 1000px; margin: auto; }
-    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background-color: #f2f2f2; }
-    input[type="number"], select { width: 100%; max-width: 80px; }
-    .total { font-weight: bold; }
-    h3 { margin-top: 40px; color: #004080; }
-    label { font-weight: bold; display: block; margin: 10px 0 5px; }
-    .warning { color: red; display: none; margin-top: 5px; }
-    .option-group { margin: 10px 0; padding: 10px; border: 1px dashed #aaa; background: #f9f9f9; }
-    .option-group label { display: block; font-weight: normal; margin-bottom: 5px; }
-    .option-group input[type="number"] { max-width: 60px; display: inline-block; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: auto;
+      max-width: 1000px;
+      font-size: 16px;
+    }
 
-.button-group {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.button-group button {
-  padding: 10px 15px;
-  font-size: 14px;
-}
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 20px;
+    }
 
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  #printArea, #printArea * {
-    visibility: visible;
-  }
-  #printArea {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-  }
-}
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
 
+    th {
+      background-color: #f2f2f2;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      max-width: 80px;
+      box-sizing: border-box;
+    }
+
+    .total {
+      font-weight: bold;
+    }
+
+    h3 {
+      margin-top: 40px;
+      color: #004080;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    .warning {
+      color: red;
+      display: none;
+      margin-top: 5px;
+    }
+
+    .option-group {
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px dashed #aaa;
+      background: #f9f9f9;
+    }
+
+    .option-group label {
+      display: block;
+      font-weight: normal;
+      margin-bottom: 5px;
+    }
+
+    .option-group input[type="number"] {
+      max-width: 60px;
+      display: inline-block;
+    }
+
+    .button-group {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button-group button {
+      padding: 10px 15px;
+      font-size: 14px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+        font-size: 15px;
+      }
+
+      h2, h3 {
+        font-size: 1.2em;
+      }
+
+      th, td {
+        font-size: 14px;
+        padding: 6px;
+      }
+
+      .option-group input[type="number"] {
+        width: 60px;
+      }
+
+      .button-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .button-group button {
+        width: 100%;
+        font-size: 16px;
+      }
+
+      .option-group label {
+        font-size: 15px;
+      }
+
+      .total {
+        font-size: 1em;
+      }
+
+      .warning {
+        font-size: 14px;
+      }
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+
+      #printArea, #printArea * {
+        visibility: visible;
+      }
+
+      #printArea {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+      }
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background-color: #f2f2f2;
+      z-index: 1;
+    }
   </style>
 </head>
 <body>
-  <h2>Kalkulator Keluasan Kuarters</h2>
 
-  <h3>Banglo / Berkembar / Teres</h3>
+<!-- Your original HTML content with table wrappers added -->
+<h2 style="background-color: rgb(195, 234, 254);">Kalkulator Keluasan Lantai Maksimum Kuarters</h2>
+
+<h3>Banglo / Berkembar / Teres</h3>
+<div class="table-wrapper">
   <table>
     <thead>
       <tr>
@@ -69,27 +185,28 @@
       </tr>
     </tfoot>
   </table>
+</div>
 
-  <h3>Bertingkat / Apartmen</h3>
-  <div class="option-group">
-    <label>Tambah Ruang (Untuk Bertingkat/Apartmen):</label>
-    <label><input type="radio" name="tambahan" value="default" checked oninput="calculateTotal('bertingkat')"> Sirkulasi 25% + Servis 10% (Jumlah 35%)</label>
-    <label><input type="radio" name="tambahan" value="custom" onchange="calculateTotal('bertingkat')"> Custom (%)
-      <input type="number" id="customPercent" value="0" min="0" max="100" oninput="calculateTotal('bertingkat')" disabled> %</label>
-    <div class="warning" id="warningText">⚠️ Jumlah custom peratus melebihi 35%!</div>
-  </div>
+<h3>Bertingkat / Apartmen</h3>
+<div class="option-group">
+  <label>Tambah Ruang (Untuk Bertingkat/Apartmen):</label>
+  <label><input type="radio" name="tambahan" value="default" checked oninput="calculateTotal('bertingkat')"> Sirkulasi 25% + Servis 10% (Jumlah 35%)</label>
+  <label><input type="radio" name="tambahan" value="custom" onchange="calculateTotal('bertingkat')"> Custom (%)
+    <input type="number" id="customPercent" value="0" min="0" max="100" oninput="calculateTotal('bertingkat')" disabled> %</label>
+  <div class="warning" id="warningText">⚠️ Jumlah custom peratus melebihi 35%!</div>
+</div>
 
+<div class="table-wrapper">
   <table>
     <thead>
-<tr>
-  <th>Bil.</th>
-  <th>Jenis</th>
-  <th>Kelas</th>
-  <th>Bilangan</th>
-  <th>Keluasan seunit (m²)</th>
-  <th>Jumlah Keluasan (m²)</th>
-</tr>
-
+      <tr>
+        <th>Kelas</th>
+        <th>Gred SSM Lama</th>
+        <th>Gred SSPA Baharu</th>
+        <th>Bilangan Kuarters</th>
+        <th>Keluasan seunit (m²)</th>
+        <th>Jumlah Keluasan (m²)</th>
+      </tr>
     </thead>
     <tbody id="table-body-bertingkat"></tbody>
     <tfoot>
@@ -107,48 +224,51 @@
       </tr>
     </tfoot>
   </table>
+</div>
 
 <div id="printArea">
   <h3>Ringkasan Schedule of Accommodation (SOA)</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Jenis</th>
-        <th>Kelas</th>
-        <th>Bilangan</th>
-        <th>Keluasan seunit (m²)</th>
-        <th>Jumlah Keluasan (m²)</th>
-      </tr>
-    </thead>
-    <tbody id="soa-summary">
-      <tr><td colspan="5"><strong>Banglo / Berkembar / Teres</strong></td></tr>
-    </tbody>
-    <tbody>
-      <tr>
-        <td colspan="4" class="total">Jumlah Banglo / Berkembar / Teres (m²)</td>
-        <td class="total" id="soa-total-banglo">0.00</td>
-      </tr>
-    </tbody>
-    <tbody id="soa-summary-bertingkat">
-      <tr><td colspan="5"><strong>Bertingkat / Apartmen</strong></td></tr>
-    </tbody>
-    <tbody>
-      <tr>
-        <td colspan="4" class="total">Tambah (Sirkulasi & Servis <span id="soa-extra-label">35</span>%)</td>
-        <td class="total" id="soa-extra-bertingkat">0.00</td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="4" class="total">Jumlah Bertingkat + Sirkulasi & Servis</td>
-        <td class="total" id="soa-total-bertingkat">0.00</td>
-      </tr>
-      <tr>
-        <td colspan="4" class="total">Jumlah Keseluruhan (m²)</td>
-        <td class="total" id="soa-total-keseluruhan">0.00</td>
-      </tr>
-    </tfoot>
-  </table>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Jenis</th>
+          <th>Kelas</th>
+          <th>Bilangan</th>
+          <th>Keluasan seunit (m²)</th>
+          <th>Jumlah Keluasan (m²)</th>
+        </tr>
+      </thead>
+      <tbody id="soa-summary">
+        <tr><td colspan="5"><strong>Banglo / Berkembar / Teres</strong></td></tr>
+      </tbody>
+      <tbody>
+        <tr>
+          <td colspan="4" class="total">Jumlah Banglo / Berkembar / Teres (m²)</td>
+          <td class="total" id="soa-total-banglo">0.00</td>
+        </tr>
+      </tbody>
+      <tbody id="soa-summary-bertingkat">
+        <tr><td colspan="5"><strong>Bertingkat / Apartmen</strong></td></tr>
+      </tbody>
+      <tbody>
+        <tr>
+          <td colspan="4" class="total">Tambah (Sirkulasi & Servis <span id="soa-extra-label">35</span>%)</td>
+          <td class="total" id="soa-extra-bertingkat">0.00</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" class="total">Jumlah Bertingkat + Sirkulasi & Servis</td>
+          <td class="total" id="soa-total-bertingkat">0.00</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="total">Jumlah Keseluruhan GFA (m²)</td>
+          <td class="total" id="soa-total-keseluruhan">0.00</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
 
 <div class="button-group">
@@ -383,7 +503,5 @@ function resetForm() {
 
 
 </script>
-
-
 </body>
 </html>
