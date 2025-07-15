@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Keluasan Kuarters</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 1000px; margin: auto; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    input[type="number"], select { width: 100%; max-width: 80px; }
+    .total { font-weight: bold; }
+    h3 { margin-top: 40px; color: #004080; }
+    label { font-weight: bold; display: block; margin: 10px 0 5px; }
+    .warning { color: red; display: none; margin-top: 5px; }
+    .option-group { margin: 10px 0; padding: 10px; border: 1px dashed #aaa; background: #f9f9f9; }
+    .option-group label { display: block; font-weight: normal; margin-bottom: 5px; }
+    .option-group input[type="number"] { max-width: 60px; display: inline-block; }
+
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.button-group button {
+  padding: 10px 15px;
+  font-size: 14px;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printArea, #printArea * {
+    visibility: visible;
+  }
+  #printArea {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <h2>Kalkulator Keluasan Kuarters</h2>
+
+  <h3>Banglo / Berkembar / Teres</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Kelas</th>
+        <th>Gred SSM Lama</th>
+        <th>Gred SSPA Baharu</th>
+        <th>Bilangan Kuarters</th>
+        <th>Keluasan Maksimum per Unit (m²)</th>
+        <th>Jumlah Keluasan (m²)</th>
+      </tr>
+    </thead>
+    <tbody id="table-body-banglo"></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="5" class="total">Jumlah Keluasan Banglo/Berkembar/Teres (m²)</td>
+        <td class="total" id="grand-total-banglo">0</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <h3>Bertingkat / Apartmen</h3>
+  <div class="option-group">
+    <label>Tambah Ruang (Untuk Bertingkat/Apartmen):</label>
+    <label><input type="radio" name="tambahan" value="default" checked oninput="calculateTotal('bertingkat')"> Sirkulasi 25% + Servis 10% (Jumlah 35%)</label>
+    <label><input type="radio" name="tambahan" value="custom" onchange="calculateTotal('bertingkat')"> Custom (%)
+      <input type="number" id="customPercent" value="0" min="0" max="100" oninput="calculateTotal('bertingkat')" disabled> %</label>
+    <div class="warning" id="warningText">⚠️ Jumlah custom peratus melebihi 35%!</div>
+  </div>
+
+  <table>
+    <thead>
+<tr>
+  <th>Bil.</th>
+  <th>Jenis</th>
+  <th>Kelas</th>
+  <th>Bilangan</th>
+  <th>Keluasan seunit (m²)</th>
+  <th>Jumlah Keluasan (m²)</th>
+</tr>
+
+    </thead>
+    <tbody id="table-body-bertingkat"></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="5" class="total">Jumlah Asas (m²)</td>
+        <td class="total" id="grand-total-bertingkat">0</td>
+      </tr>
+      <tr>
+        <td colspan="5" class="total" id="label-extra">Tambah (Sirkulasi & Servis 35%)</td>
+        <td class="total" id="extra-total">0</td>
+      </tr>
+      <tr>
+        <td colspan="5" class="total">Jumlah Keseluruhan (m²)</td>
+        <td class="total" id="final-total">0</td>
+      </tr>
+    </tfoot>
+  </table>
+
+<div id="printArea">
+  <h3>Ringkasan Schedule of Accommodation (SOA)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Jenis</th>
+        <th>Kelas</th>
+        <th>Bilangan</th>
+        <th>Keluasan seunit (m²)</th>
+        <th>Jumlah Keluasan (m²)</th>
+      </tr>
+    </thead>
+    <tbody id="soa-summary">
+      <tr><td colspan="5"><strong>Banglo / Berkembar / Teres</strong></td></tr>
+    </tbody>
+    <tbody>
+      <tr>
+        <td colspan="4" class="total">Jumlah Banglo / Berkembar / Teres (m²)</td>
+        <td class="total" id="soa-total-banglo">0.00</td>
+      </tr>
+    </tbody>
+    <tbody id="soa-summary-bertingkat">
+      <tr><td colspan="5"><strong>Bertingkat / Apartmen</strong></td></tr>
+    </tbody>
+    <tbody>
+      <tr>
+        <td colspan="4" class="total">Tambah (Sirkulasi & Servis <span id="soa-extra-label">35</span>%)</td>
+        <td class="total" id="soa-extra-bertingkat">0.00</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4" class="total">Jumlah Bertingkat + Sirkulasi & Servis</td>
+        <td class="total" id="soa-total-bertingkat">0.00</td>
+      </tr>
+      <tr>
+        <td colspan="4" class="total">Jumlah Keseluruhan (m²)</td>
+        <td class="total" id="soa-total-keseluruhan">0.00</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<div class="button-group">
+  <button onclick="window.print()">Cetak</button>
+  <button onclick="exportPDF()">Export ke PDF</button>
+  <button onclick="exportExcel()">Export ke Excel</button>
+  <button onclick="resetForm()">Reset</button>
+</div>
+
+  <script>
+    const dataBanglo = [
+      { kelas: 'A', gredSsm: 'Utama B / Gred Khas B dan ke atas', gredSspa: 'JUSA B, JUSA A, Turus', keluasan: 415 },
+      { kelas: 'B', gredSsm: 'Utama C / Gred Khas C, 53–54', gredSspa: 'Gred 14–15', keluasan: 345 },
+      { kelas: 'C', gredSsm: '47–52 atau 41–46', gredSspa: 'Gred 10–13', keluasan: 290 },
+      { kelas: 'D', gredSsm: '41–46 atau 31–40', gredSspa: 'Gred 9–11', keluasan: 220 },
+      { kelas: 'E', gredSsm: '27–40 atau 21–26', gredSspa: 'Gred 4–8', keluasan: 160 },
+      { kelas: 'F', gredSsm: '21–26', gredSspa: 'Gred 3–4', keluasan: 120 }
+    ];
+
+    const dataBertingkat = [
+      { kelas: 'C', gredSsm: '47–52 atau 41–46', gredSspa: 'Gred 10–13', keluasan: 265 },
+      { kelas: 'D', gredSsm: '41–46 atau 31–40', gredSspa: 'Gred 9–11', keluasan: 200 },
+      { kelas: 'E', gredSsm: '27–40 atau 21–26', gredSspa: 'Gred 4–8', keluasan: 140 },
+      { kelas: 'F', gredSsm: '21–26', gredSspa: 'Gred 3–4', keluasan: 120 },
+      { kelas: 'G', gredSsm: '13–20', gredSspa: 'Gred 2', keluasan: 100 },
+      { kelas: 'H', gredSsm: '11–12', gredSspa: 'Gred 1', keluasan: 93 }
+    ];
+
+    function createRow(item, index, type) {
+      return `<tr>
+        <td>${item.kelas}</td>
+        <td>${item.gredSsm}</td>
+        <td>${item.gredSspa}</td>
+        <td><input type="number" min="0" step="1" value="0" oninput="calculateTotal('${type}')" id="qty-${type}-${index}"></td>
+        <td>${item.keluasan}</td>
+        <td id="total-${type}-${index}">0</td>
+      </tr>`;
+    }
+
+    const tbodyBanglo = document.getElementById('table-body-banglo');
+    const tbodyBertingkat = document.getElementById('table-body-bertingkat');
+
+    dataBanglo.forEach((item, index) => tbodyBanglo.innerHTML += createRow(item, index, 'banglo'));
+    dataBertingkat.forEach((item, index) => tbodyBertingkat.innerHTML += createRow(item, index, 'bertingkat'));
+
+    function calculateTotal(type) {
+      const data = type === 'banglo' ? dataBanglo : dataBertingkat;
+      let grandTotal = 0;
+      data.forEach((item, index) => {
+        const qty = parseInt(document.getElementById(`qty-${type}-${index}`).value) || 0;
+        const total = qty * item.keluasan;
+        document.getElementById(`total-${type}-${index}`).textContent = total.toFixed(2);
+        grandTotal += total;
+      });
+
+      if (type === 'banglo') {
+        document.getElementById('grand-total-banglo').textContent = grandTotal.toFixed(2);
+      } else {
+        document.getElementById('grand-total-bertingkat').textContent = grandTotal.toFixed(2);
+        const isCustom = document.querySelector('input[name="tambahan"]:checked').value === 'custom';
+        const customVal = parseFloat(document.getElementById('customPercent').value || 0);
+        document.getElementById('customPercent').disabled = !isCustom;
+        const warning = document.getElementById('warningText');
+        warning.style.display = (isCustom && customVal > 35) ? 'block' : 'none';
+
+        const percent = isCustom ? customVal : 35;
+        document.getElementById('label-extra').textContent = `Tambah (Sirkulasi & Servis ${percent}%)`;
+        const extra = (percent / 100) * grandTotal;
+        document.getElementById('extra-total').textContent = extra.toFixed(2);
+        document.getElementById('final-total').textContent = (grandTotal + extra).toFixed(2);
+      }
+    }
+
+    function updateSOA() {
+      const soaTable = document.getElementById("soa-summary");
+      const soaBertingkat = document.getElementById("soa-summary-bertingkat");
+      soaTable.innerHTML = '<tr><td colspan="5"><strong>Banglo / Berkembar / Teres</strong></td></tr>';
+      soaBertingkat.innerHTML = '<tr><td colspan="5"><strong>Bertingkat / Apartmen</strong></td></tr>';
+
+      let totalBanglo = 0;
+      dataBanglo.forEach((item, index) => {
+        const qtyInput = document.getElementById(`qty-banglo-${index}`);
+        const qty = parseInt(qtyInput?.value || 0);
+        if (qty > 0) {
+          const jumlah = qty * item.keluasan;
+          totalBanglo += jumlah;
+          soaTable.innerHTML += `
+            <tr>
+              <td>Banglo</td>
+              <td>${item.kelas}</td>
+              <td>${qty}</td>
+              <td>${item.keluasan.toFixed(2)}</td>
+              <td>${jumlah.toFixed(2)}</td>
+            </tr>`;
+        }
+      });
+
+      let totalBertingkat = 0;
+      dataBertingkat.forEach((item, index) => {
+        const qtyInput = document.getElementById(`qty-bertingkat-${index}`);
+        const qty = parseInt(qtyInput?.value || 0);
+        if (qty > 0) {
+          const jumlah = qty * item.keluasan;
+          totalBertingkat += jumlah;
+          soaBertingkat.innerHTML += `
+            <tr>
+              <td>Bertingkat</td>
+              <td>${item.kelas}</td>
+              <td>${qty}</td>
+              <td>${item.keluasan.toFixed(2)}</td>
+              <td>${jumlah.toFixed(2)}</td>
+            </tr>`;
+        }
+      });
+
+      const isCustom = document.querySelector('input[name="tambahan"]:checked').value === 'custom';
+      const customVal = parseFloat(document.getElementById('customPercent').value || 0);
+      const percent = isCustom ? customVal : 35;
+      const extra = (percent / 100) * totalBertingkat;
+      const totalKeseluruhan = totalBertingkat + extra;
+
+document.getElementById('soa-total-banglo').textContent = totalBanglo.toFixed(2);
+document.getElementById('soa-extra-bertingkat').textContent = extra.toFixed(2);
+document.getElementById('soa-extra-label').textContent = percent;
+document.getElementById('soa-total-bertingkat').textContent = totalKeseluruhan.toFixed(2);
+document.getElementById('soa-total-keseluruhan').textContent = (totalBanglo + totalKeseluruhan).toFixed(2);
+
+    }
+
+    const originalCalculateTotal = calculateTotal;
+    calculateTotal = function(type) {
+      originalCalculateTotal(type);
+      updateSOA();
+    }
+
+    calculateTotal('banglo');
+    calculateTotal('bertingkat');
+  </script>
+
+<!-- CDN diperlukan -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+function exportPDF() {
+  const printArea = document.getElementById("printArea");
+  html2canvas(printArea, { scale: 2 }).then(canvas => {
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jspdf.jsPDF("p", "mm", "a4");
+
+    const imgWidth = 190;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+
+    pdf.setFontSize(14);
+    pdf.text("Ringkasan Schedule of Accommodation (SOA)", 10, 15);
+    pdf.addImage(imgData, "PNG", 10, 20, imgWidth, imgHeight);
+
+    const now = new Date().toLocaleDateString("ms-MY").replace(/\//g, '-');
+    pdf.save(`Ringkasan_SOA_${now}.pdf`);
+  });
+}
+
+function exportExcel() {
+  const printArea = document.getElementById("printArea");
+  const table = printArea.querySelector("table");
+
+  const wb = XLSX.utils.book_new();
+  const ws_data = [];
+
+  const today = new Date().toLocaleDateString("ms-MY");
+  ws_data.push(["Ringkasan Schedule of Accommodation (SOA)"]);
+  ws_data.push(["Tarikh:", today]);
+  ws_data.push([]);
+
+  const headers = Array.from(table.querySelectorAll("thead tr th")).map(th => th.textContent.trim());
+  ws_data.push(headers);
+
+  const rows = table.querySelectorAll("tbody tr, tfoot tr");
+  rows.forEach(row => {
+    const cols = Array.from(row.querySelectorAll("td")).map(td => td.textContent.trim());
+    ws_data.push(cols);
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(ws_data);
+  XLSX.utils.book_append_sheet(wb, ws, "Ringkasan SOA");
+  XLSX.writeFile(wb, "Ringkasan_SOA.xlsx");
+}
+
+
+window.addEventListener("beforeunload", () => {
+  const data = { banglo: [], bertingkat: [] };
+  dataBanglo.forEach((_, i) => data.banglo.push(document.getElementById(`qty-banglo-${i}`).value));
+  dataBertingkat.forEach((_, i) => data.bertingkat.push(document.getElementById(`qty-bertingkat-${i}`).value));
+  localStorage.setItem("kuartersData", JSON.stringify(data));
+});
+
+window.addEventListener("load", () => {
+  const saved = JSON.parse(localStorage.getItem("kuartersData"));
+  if (saved) {
+    saved.banglo.forEach((val, i) => document.getElementById(`qty-banglo-${i}`).value = val);
+    saved.bertingkat.forEach((val, i) => document.getElementById(`qty-bertingkat-${i}`).value = val);
+    calculateTotal('banglo');
+    calculateTotal('bertingkat');
+  }
+});
+
+function resetForm() {
+  if (confirm("Adakah anda pasti mahu mengosongkan semua data?")) {
+    localStorage.removeItem("kuartersData");
+
+    // Reset semua input ke 0
+    dataBanglo.forEach((_, i) => {
+      document.getElementById(`qty-banglo-${i}`).value = 0;
+    });
+    dataBertingkat.forEach((_, i) => {
+      document.getElementById(`qty-bertingkat-${i}`).value = 0;
+    });
+
+    // Reset peratus tambahan ke default
+    document.querySelector('input[name="tambahan"][value="default"]').checked = true;
+    document.getElementById('customPercent').value = 0;
+    document.getElementById('customPercent').disabled = true;
+
+    // Kira semula
+    calculateTotal('banglo');
+    calculateTotal('bertingkat');
+  }
+}
+
+
+
+
+</script>
+
+
+</body>
+</html>
