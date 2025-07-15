@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Button Example</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Optional if using external CSS -->
+
   <title>Kalkulator Keluasan Kuarters</title>
   <style>
     body {
@@ -92,6 +95,22 @@
       -webkit-overflow-scrolling: touch;
     }
 
+.home-button {
+    background-color: #4CAF50; /* Blue background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Padding around the text */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* Remove underline from the link */
+    font-size: 16px;
+    border-radius: 5px; /* Rounded corners */
+    margin: 10px;
+}
+
+.home-button:hover {
+    background-color: #45a049; /* Darker green when hovering */
+}
+
+
     @media (max-width: 768px) {
       body {
         padding: 10px;
@@ -159,12 +178,17 @@
     }
   </style>
 </head>
+      
 <body>
+   <header>
+ <a href="https://bpnke.github.io/main/" class="home-button">Home</a>
+<button class="home-button" onclick="resetForm()" style="border: 1px none rgb(0, 0, 0);">Reset</button>
 
+    </header>
 <!-- Your original HTML content with table wrappers added -->
-<h2 style="background-color: rgb(195, 234, 254);">Kalkulator Keluasan Lantai Maksimum Kuarters</h2>
+<h2 style="background-color: rgb(195, 234, 254); text-align: center;">Kalkulator Keluasan Lantai Maksimum Kuarters</h2>
 
-<h3>Banglo / Berkembar / Teres</h3>
+<h3 style="text-align: center; background-color: rgb(195, 234, 254);">Banglo / Berkembar / Teres</h3>
 <div class="table-wrapper">
   <table>
     <thead>
@@ -187,7 +211,7 @@
   </table>
 </div>
 
-<h3>Bertingkat / Apartmen</h3>
+<h3 style="text-align: center; background-color: rgb(195, 234, 254);">Bertingkat / Apartmen</h3>
 <div class="option-group">
   <label>Tambah Ruang (Untuk Bertingkat/Apartmen):</label>
   <label><input type="radio" name="tambahan" value="default" checked oninput="calculateTotal('bertingkat')"> Sirkulasi 25% + Servis 10% (Jumlah 35%)</label>
@@ -227,7 +251,7 @@
 </div>
 
 <div id="printArea">
-  <h3>Ringkasan Schedule of Accommodation (SOA)</h3>
+  <h3 style="text-align: center; background-color: rgb(195, 234, 254);">Ringkasan Schedule of Accommodation (SOA)</h3>
   <div class="table-wrapper">
     <table>
 <thead>
@@ -275,7 +299,6 @@
   <button onclick="window.print()">Cetak</button>
   <button onclick="exportPDF()">Export ke PDF</button>
   <button onclick="exportExcel()">Export ke Excel</button>
-  <button onclick="resetForm()">Reset</button>
 </div>
 
   <script>
@@ -297,16 +320,17 @@
       { kelas: 'H', gredSsm: '11–12', gredSspa: 'Gred 1', keluasan: 93 }
     ];
 
-    function createRow(item, index, type) {
-      return `<tr>
-        <td>${item.kelas}</td>
-        <td>${item.gredSsm}</td>
-        <td>${item.gredSspa}</td>
-        <td><input type="number" min="0" step="1" value="0" oninput="calculateTotal('${type}')" id="qty-${type}-${index}"></td>
-        <td>${item.keluasan}</td>
-        <td id="total-${type}-${index}">0</td>
-      </tr>`;
-    }
+function createRow(item, index, type) {
+  return `<tr>
+    <td>${item.kelas}</td>
+    <td>${item.gredSsm}</td>
+    <td>${item.gredSspa}</td>
+    <td><input type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0" oninput="calculateTotal('${type}')" id="qty-${type}-${index}"></td>
+    <td>${item.keluasan}</td>
+    <td id="total-${type}-${index}">0</td>
+  </tr>`;
+}
+
 
     const tbodyBanglo = document.getElementById('table-body-banglo');
     const tbodyBertingkat = document.getElementById('table-body-bertingkat');
