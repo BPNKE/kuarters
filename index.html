@@ -230,40 +230,40 @@
   <h3>Ringkasan Schedule of Accommodation (SOA)</h3>
   <div class="table-wrapper">
     <table>
-      <thead>
-        <tr>
-          <th>Jenis</th>
-          <th>Kelas</th>
-          <th>Bilangan</th>
-          <th>Keluasan seunit (m²)</th>
-          <th>Jumlah Keluasan (m²)</th>
-        </tr>
-      </thead>
+<thead>
+  <tr>
+    <th>Kelas</th>
+    <th>Bilangan</th>
+    <th>Keluasan seunit (m²)</th>
+    <th>Jumlah Keluasan (m²)</th>
+  </tr>
+</thead>
+
       <tbody id="soa-summary">
-        <tr><td colspan="5"><strong>Banglo / Berkembar / Teres</strong></td></tr>
+        <tr><td colspan="4"><strong>Banglo / Berkembar / Teres</strong></td></tr>
       </tbody>
       <tbody>
         <tr>
-          <td colspan="4" class="total">Jumlah Banglo / Berkembar / Teres (m²)</td>
+          <td colspan="3" class="total">Jumlah Banglo / Berkembar / Teres (m²)</td>
           <td class="total" id="soa-total-banglo">0.00</td>
         </tr>
       </tbody>
       <tbody id="soa-summary-bertingkat">
-        <tr><td colspan="5"><strong>Bertingkat / Apartmen</strong></td></tr>
+        <tr><td colspan="4"><strong>Bertingkat / Apartmen</strong></td></tr>
       </tbody>
       <tbody>
         <tr>
-          <td colspan="4" class="total">Tambah (Sirkulasi & Servis <span id="soa-extra-label">35</span>%)</td>
+          <td colspan="3" class="total">Jumlah Sirkulasi dan Servis <span id="soa-extra-label">35</span>%</td>
           <td class="total" id="soa-extra-bertingkat">0.00</td>
         </tr>
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="4" class="total">Jumlah Bertingkat + Sirkulasi & Servis</td>
+          <td colspan="3" class="total">Jumlah Bertingkat + Sirkulasi & Servis</td>
           <td class="total" id="soa-total-bertingkat">0.00</td>
         </tr>
         <tr>
-          <td colspan="4" class="total">Jumlah Keseluruhan GFA (m²)</td>
+          <td colspan="3" class="total">Jumlah Keseluruhan GFA (m²)</td>
           <td class="total" id="soa-total-keseluruhan">0.00</td>
         </tr>
       </tfoot>
@@ -314,95 +314,90 @@
     dataBanglo.forEach((item, index) => tbodyBanglo.innerHTML += createRow(item, index, 'banglo'));
     dataBertingkat.forEach((item, index) => tbodyBertingkat.innerHTML += createRow(item, index, 'bertingkat'));
 
-    function calculateTotal(type) {
-      const data = type === 'banglo' ? dataBanglo : dataBertingkat;
-      let grandTotal = 0;
-      data.forEach((item, index) => {
-        const qty = parseInt(document.getElementById(`qty-${type}-${index}`).value) || 0;
-        const total = qty * item.keluasan;
-        document.getElementById(`total-${type}-${index}`).textContent = total.toFixed(2);
-        grandTotal += total;
-      });
+   function calculateTotal(type) {
+  const data = type === 'banglo' ? dataBanglo : dataBertingkat;
+  let grandTotal = 0;
+  data.forEach((item, index) => {
+    const qty = parseInt(document.getElementById(`qty-${type}-${index}`).value) || 0;
+    const total = qty * item.keluasan;
+    document.getElementById(`total-${type}-${index}`).textContent = total.toFixed(2);
+    grandTotal += total;
+  });
 
-      if (type === 'banglo') {
-        document.getElementById('grand-total-banglo').textContent = grandTotal.toFixed(2);
-      } else {
-        document.getElementById('grand-total-bertingkat').textContent = grandTotal.toFixed(2);
-        const isCustom = document.querySelector('input[name="tambahan"]:checked').value === 'custom';
-        const customVal = parseFloat(document.getElementById('customPercent').value || 0);
-        document.getElementById('customPercent').disabled = !isCustom;
-        const warning = document.getElementById('warningText');
-        warning.style.display = (isCustom && customVal > 35) ? 'block' : 'none';
+  if (type === 'banglo') {
+    document.getElementById('grand-total-banglo').textContent = grandTotal.toFixed(2);
+  } else {
+    document.getElementById('grand-total-bertingkat').textContent = grandTotal.toFixed(2);
+    const isCustom = document.querySelector('input[name="tambahan"]:checked').value === 'custom';
+    const customVal = parseFloat(document.getElementById('customPercent').value || 0);
+    document.getElementById('customPercent').disabled = !isCustom;
+    const warning = document.getElementById('warningText');
+    warning.style.display = (isCustom && customVal > 35) ? 'block' : 'none';
 
-        const percent = isCustom ? customVal : 35;
-        document.getElementById('label-extra').textContent = `Tambah (Sirkulasi & Servis ${percent}%)`;
-        const extra = (percent / 100) * grandTotal;
-        document.getElementById('extra-total').textContent = extra.toFixed(2);
-        document.getElementById('final-total').textContent = (grandTotal + extra).toFixed(2);
-      }
+    const percent = isCustom ? customVal : 35;
+    document.getElementById('label-extra').textContent = `Tambah (Sirkulasi & Servis ${percent}%)`;
+    const extra = (percent / 100) * grandTotal;
+    document.getElementById('extra-total').textContent = extra.toFixed(2);
+    document.getElementById('final-total').textContent = (grandTotal + extra).toFixed(2);
+  }
+
+  updateSOA(); // ✅ this must be here
+}
+
+
+function updateSOA() {
+  const soaTable = document.getElementById("soa-summary");
+  const soaBertingkat = document.getElementById("soa-summary-bertingkat");
+  soaTable.innerHTML = '<tr><td colspan="4"><strong>Banglo / Berkembar / Teres</strong></td></tr>';
+  soaBertingkat.innerHTML = '<tr><td colspan="4"><strong>Bertingkat / Apartmen</strong></td></tr>';
+
+  let totalBanglo = 0;
+  dataBanglo.forEach((item, index) => {
+    const qtyInput = document.getElementById(`qty-banglo-${index}`);
+    const qty = parseInt(qtyInput?.value || 0);
+    if (qty > 0) {
+      const jumlah = qty * item.keluasan;
+      totalBanglo += jumlah;
+      soaTable.innerHTML += `
+        <tr>
+          <td>${item.kelas}</td>
+          <td>${qty}</td>
+          <td>${item.keluasan.toFixed(2)}</td>
+          <td>${jumlah.toFixed(2)}</td>
+        </tr>`;
     }
+  });
 
-    function updateSOA() {
-      const soaTable = document.getElementById("soa-summary");
-      const soaBertingkat = document.getElementById("soa-summary-bertingkat");
-      soaTable.innerHTML = '<tr><td colspan="5"><strong>Banglo / Berkembar / Teres</strong></td></tr>';
-      soaBertingkat.innerHTML = '<tr><td colspan="5"><strong>Bertingkat / Apartmen</strong></td></tr>';
-
-      let totalBanglo = 0;
-      dataBanglo.forEach((item, index) => {
-        const qtyInput = document.getElementById(`qty-banglo-${index}`);
-        const qty = parseInt(qtyInput?.value || 0);
-        if (qty > 0) {
-          const jumlah = qty * item.keluasan;
-          totalBanglo += jumlah;
-          soaTable.innerHTML += `
-            <tr>
-              <td>Banglo</td>
-              <td>${item.kelas}</td>
-              <td>${qty}</td>
-              <td>${item.keluasan.toFixed(2)}</td>
-              <td>${jumlah.toFixed(2)}</td>
-            </tr>`;
-        }
-      });
-
-      let totalBertingkat = 0;
-      dataBertingkat.forEach((item, index) => {
-        const qtyInput = document.getElementById(`qty-bertingkat-${index}`);
-        const qty = parseInt(qtyInput?.value || 0);
-        if (qty > 0) {
-          const jumlah = qty * item.keluasan;
-          totalBertingkat += jumlah;
-          soaBertingkat.innerHTML += `
-            <tr>
-              <td>Bertingkat</td>
-              <td>${item.kelas}</td>
-              <td>${qty}</td>
-              <td>${item.keluasan.toFixed(2)}</td>
-              <td>${jumlah.toFixed(2)}</td>
-            </tr>`;
-        }
-      });
-
-      const isCustom = document.querySelector('input[name="tambahan"]:checked').value === 'custom';
-      const customVal = parseFloat(document.getElementById('customPercent').value || 0);
-      const percent = isCustom ? customVal : 35;
-      const extra = (percent / 100) * totalBertingkat;
-      const totalKeseluruhan = totalBertingkat + extra;
-
-document.getElementById('soa-total-banglo').textContent = totalBanglo.toFixed(2);
-document.getElementById('soa-extra-bertingkat').textContent = extra.toFixed(2);
-document.getElementById('soa-extra-label').textContent = percent;
-document.getElementById('soa-total-bertingkat').textContent = totalKeseluruhan.toFixed(2);
-document.getElementById('soa-total-keseluruhan').textContent = (totalBanglo + totalKeseluruhan).toFixed(2);
-
+  let totalBertingkat = 0;
+  dataBertingkat.forEach((item, index) => {
+    const qtyInput = document.getElementById(`qty-bertingkat-${index}`);
+    const qty = parseInt(qtyInput?.value || 0);
+    if (qty > 0) {
+      const jumlah = qty * item.keluasan;
+      totalBertingkat += jumlah;
+      soaBertingkat.innerHTML += `
+        <tr>
+          <td>${item.kelas}</td>
+          <td>${qty}</td>
+          <td>${item.keluasan.toFixed(2)}</td>
+          <td>${jumlah.toFixed(2)}</td>
+        </tr>`;
     }
+  });
 
-    const originalCalculateTotal = calculateTotal;
-    calculateTotal = function(type) {
-      originalCalculateTotal(type);
-      updateSOA();
-    }
+  const isCustom = document.querySelector('input[name="tambahan"]:checked').value === 'custom';
+  const customVal = parseFloat(document.getElementById('customPercent').value || 0);
+  const percent = isCustom ? customVal : 35;
+  const extra = (percent / 100) * totalBertingkat;
+  const totalKeseluruhan = totalBertingkat + extra;
+
+  document.getElementById('soa-total-banglo').textContent = totalBanglo.toFixed(2);
+  document.getElementById('soa-extra-bertingkat').textContent = extra.toFixed(2);
+  document.getElementById('soa-extra-label').textContent = percent;
+  document.getElementById('soa-total-bertingkat').textContent = totalKeseluruhan.toFixed(2);
+  document.getElementById('soa-total-keseluruhan').textContent = (totalBanglo + totalKeseluruhan).toFixed(2);
+}
+
 
     calculateTotal('banglo');
     calculateTotal('bertingkat');
