@@ -1,309 +1,403 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
- <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Button Example</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Optional if using external CSS -->
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Kalkulator Keluasan Kuarters</title>
+  
   <style>
+    :root {
+      --primary-color: #004080;
+      --bg-header: rgb(195, 234, 254);
+      --border-color: #ccc;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 15px; /* Padding dikurangkan sedikit untuk mobile */
       margin: auto;
-      max-width: 1000px;
-      font-size: 16px;
+      max-width: 1280px;
+      font-size: 15px;
+      background-color: #fff;
+      color: #333;
+      -webkit-text-size-adjust: 100%; /* Menghalang pelarasan teks automatik */
+    }
+
+    /* --- HEADER STYLES --- */
+    h2.main-title {
+      background-color: var(--bg-header);
+      text-align: center;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: #000;
+      font-size: 1.3rem;
+    }
+
+    h3.table-header {
+      text-align: center;
+      background-color: var(--bg-header);
+      padding: 12px;
+      margin-top: 30px;
+      margin-bottom: 0;
+      border: 1px solid var(--border-color);
+      border-bottom: none;
+      color: var(--primary-color);
+      font-weight: bold;
+      border-radius: 8px 8px 0 0;
+    }
+
+    /* --- TABLE STYLES (RESPONSIVE) --- */
+    .table-wrapper {
+      overflow-x: auto; /* Membenarkan scroll kiri-kanan */
+      -webkit-overflow-scrolling: touch; /* Smooth scroll untuk iOS */
+      border: 1px solid var(--border-color);
+      margin-bottom: 20px;
+      border-radius: 0 0 8px 8px;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
     table {
       border-collapse: collapse;
       width: 100%;
-      margin-bottom: 20px;
+      min-width: 800px; /* Pastikan jadual tidak menjadi terlalu kurus di mobile */
     }
 
     th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
+      border: 1px solid var(--border-color);
+      padding: 10px 8px;
       text-align: center;
+      vertical-align: middle;
     }
 
     th {
-      background-color: #f2f2f2;
+      background-color: #f8f9fa;
+      font-weight: bold;
+      color: #333;
+      white-space: nowrap; /* Elak header pecah baris tak cantik */
     }
 
-    input[type="number"],
-    select {
+    /* --- INPUT STYLES --- */
+    input[type="number"] {
       width: 100%;
       max-width: 80px;
-      box-sizing: border-box;
-    }
-
-    .total {
-      font-weight: bold;
-    }
-
-    h3 {
-      margin-top: 40px;
-      color: #004080;
-    }
-
-    label {
-      font-weight: bold;
+      padding: 8px; /* Padding lebih besar untuk jari */
+      text-align: center;
+      border: 1px solid #aaa;
+      border-radius: 4px;
       display: block;
-      margin: 10px 0 5px;
+      margin: 0 auto;
+      font-size: 16px; /* PENTING: 16px menghalang iOS zoom automatik */
+      -moz-appearance: textfield; /* Buang arrow number di Firefox */
+    }
+    
+    /* Buang arrow number di Chrome/Safari/Edge */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* --- FOOTER & TOTALS --- */
+    tfoot tr { background-color: #fff; }
+    
+    tfoot td.total-label {
+      text-align: right;
+      padding-right: 15px;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .total-value {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: var(--primary-color);
+    }
+
+    /* --- OPTIONS CONTAINER --- */
+    .option-container {
+      border: 1px solid var(--border-color);
+      padding: 15px;
+      margin: 15px 0;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap; /* Membenarkan jatuh ke baris bawah */
+    }
+
+    .option-container label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 5px;
     }
 
     .warning {
       color: red;
+      font-weight: bold;
       display: none;
-      margin-top: 5px;
+      margin-left: 10px;
+      font-size: 0.9rem;
     }
 
-    .option-group {
-      margin: 10px 0;
-      padding: 10px;
-      border: 1px dashed #aaa;
-      background: #f9f9f9;
-    }
-
-    .option-group label {
-      display: block;
-      font-weight: normal;
-      margin-bottom: 5px;
-    }
-
-    .option-group input[type="number"] {
-      max-width: 60px;
+    /* --- BUTTONS --- */
+    .home-button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 16px;
+      text-decoration: none;
+      font-size: 14px;
+      border-radius: 6px;
+      margin-right: 5px;
       display: inline-block;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .button-group {
-      margin-top: 20px;
+      margin-top: 30px;
       display: flex;
       gap: 10px;
+      justify-content: center;
       flex-wrap: wrap;
     }
-
-    .button-group button {
-      padding: 10px 15px;
-      font-size: 14px;
+    
+    .action-btn {
+      padding: 12px 24px;
+      font-size: 15px;
+      cursor: pointer;
+      background-color: #008CBA;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      transition: background 0.3s;
+      min-width: 120px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .action-btn:active {
+      transform: translateY(1px);
+      box-shadow: none;
     }
 
-    .table-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-.home-button {
-    background-color: #4CAF50; /* Blue background */
-    color: white; /* White text */
-    padding: 10px 20px; /* Padding around the text */
-    text-align: center; /* Centered text */
-    text-decoration: none; /* Remove underline from the link */
-    font-size: 16px;
-    border-radius: 5px; /* Rounded corners */
-    margin: 10px;
-}
-
-.home-button:hover {
-    background-color: #45a049; /* Darker green when hovering */
-}
-
-
+    /* =========================================
+       MOBILE OPTIMIZATION (MEDIA QUERIES)
+       ========================================= */
     @media (max-width: 768px) {
       body {
         padding: 10px;
-        font-size: 15px;
       }
 
-      h2, h3 {
-        font-size: 1.2em;
+      /* Stack Option Container menegak */
+      .option-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
       }
 
-      th, td {
-        font-size: 14px;
-        padding: 6px;
+      .option-container strong {
+        display: block;
+        margin-bottom: 5px;
       }
 
-      .option-group input[type="number"] {
-        width: 60px;
-      }
-
+      /* Stack Butang menegak supaya mudah ditekan */
       .button-group {
         flex-direction: column;
-        align-items: stretch;
+        width: 100%;
       }
 
-      .button-group button {
+      .action-btn {
         width: 100%;
+        padding: 15px; /* Lebih besar untuk sentuhan */
         font-size: 16px;
       }
-
-      .option-group label {
-        font-size: 15px;
-      }
-
-      .total {
-        font-size: 1em;
-      }
-
-      .warning {
+      
+      /* Jadual: Kurangkan padding sel untuk jimat ruang */
+      th, td {
+        padding: 8px 4px;
         font-size: 14px;
       }
+      
+      /* Input lebih jelas */
+      input[type="number"] {
+        background-color: #fafafa;
+      }
     }
 
+    /* =========================================
+       PRINT STYLES (KEKAL SAMA TAPI DIPERBAIKI)
+       ========================================= */
     @media print {
-      body * {
-        visibility: hidden;
+      body > * { display: none !important; }
+      #printArea { 
+        display: block !important; 
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        background-color: white;
       }
-
-      #printArea, #printArea * {
-        visibility: visible;
+      #printArea * { visibility: visible !important; }
+      
+      /* Reset layout jadual untuk cetakan */
+      .table-wrapper { 
+        overflow: visible !important; 
+        border: none !important; 
+        box-shadow: none !important;
       }
-
-      #printArea {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-      }
-    }
-
-    thead th {
-      position: sticky;
-      top: 0;
-      background-color: #f2f2f2;
-      z-index: 1;
+      
+      /* Sembunyikan butang dan header */
+      .home-button, .action-btn, header, .button-group { display: none !important; }
+      
+      body { font-size: 12pt; color: black; }
+      
+      /* Pastikan header jadual ada background kelabu bila dicetak */
+      th { background-color: #f0f0f0 !important; -webkit-print-color-adjust: exact; }
     }
   </style>
 </head>
       
 <body>
-   <header>
- <a href="https://bpnke.github.io/main/" class="home-button">Home</a>
-<button class="home-button" onclick="resetForm()" style="border: 1px none rgb(0, 0, 0);">Reset</button>
+  <header>
+    <a href="https://bpnke.github.io/main/" class="home-button">Home</a>
+    <button class="home-button" onclick="resetForm()" style="background-color: #f44336; border:none; cursor:pointer;">Reset</button>
+  </header>
 
-    </header>
-<!-- Your original HTML content with table wrappers added -->
-<h2 style="background-color: rgb(195, 234, 254); text-align: center;">Kalkulator Keluasan Lantai Maksimum Kuarters</h2>
+  <h2 class="main-title">Kalkulator Keluasan Lantai Maksimum Kuarters</h2>
 
-<h3 style="text-align: center; background-color: rgb(195, 234, 254);">Banglo / Berkembar / Teres</h3>
-<div class="table-wrapper">
-  <table>
-    <thead>
-      <tr>
-        <th>Kelas</th>
-        <th>Gred SSM Lama</th>
-        <th>Gred SSPA Baharu</th>
-        <th>Bilangan Kuarters</th>
-        <th>Keluasan Maksimum per Unit (m²)</th>
-        <th>Jumlah Keluasan (m²)</th>
-      </tr>
-    </thead>
-    <tbody id="table-body-banglo"></tbody>
-    <tfoot>
-      <tr>
-        <td colspan="5" class="total">Jumlah Keluasan Banglo/Berkembar/Teres (m²)</td>
-        <td class="total" id="grand-total-banglo">0</td>
-      </tr>
-    </tfoot>
-  </table>
-</div>
-
-<h3 style="text-align: center; background-color: rgb(195, 234, 254);">Bertingkat / Apartmen</h3>
-<div class="option-group">
-  <label>Tambah Ruang (Untuk Bertingkat/Apartmen):</label>
-  <label><input type="radio" name="tambahan" value="default" checked oninput="calculateTotal('bertingkat')"> Sirkulasi 25% + Servis 10% (Jumlah 35%)</label>
-  <label><input type="radio" name="tambahan" value="custom" onchange="calculateTotal('bertingkat')"> Custom (%)
-    <input type="number" id="customPercent" value="0" min="0" max="100" oninput="calculateTotal('bertingkat')" disabled> %</label>
-  <div class="warning" id="warningText">⚠️ Jumlah custom peratus melebihi 35%!</div>
-</div>
-
-<div class="table-wrapper">
-  <table>
-    <thead>
-      <tr>
-        <th>Kelas</th>
-        <th>Gred SSM Lama</th>
-        <th>Gred SSPA Baharu</th>
-        <th>Bilangan Kuarters</th>
-        <th>Keluasan seunit (m²)</th>
-        <th>Jumlah Keluasan (m²)</th>
-      </tr>
-    </thead>
-    <tbody id="table-body-bertingkat"></tbody>
-    <tfoot>
-      <tr>
-        <td colspan="5" class="total">Jumlah Asas (m²)</td>
-        <td class="total" id="grand-total-bertingkat">0</td>
-      </tr>
-      <tr>
-        <td colspan="5" class="total" id="label-extra">Tambah (Sirkulasi & Servis 35%)</td>
-        <td class="total" id="extra-total">0</td>
-      </tr>
-      <tr>
-        <td colspan="5" class="total">Jumlah Keseluruhan (m²)</td>
-        <td class="total" id="final-total">0</td>
-      </tr>
-    </tfoot>
-  </table>
-</div>
-
-<div id="printArea">
-  <h3 style="text-align: center; background-color: rgb(195, 234, 254);">Ringkasan Schedule of Accommodation (SOA)</h3>
+  <h3 class="table-header">Banglo / Berkembar / Teres</h3>
   <div class="table-wrapper">
     <table>
-<thead>
-  <tr>
-    <th>Kelas</th>
-    <th>Bilangan</th>
-    <th>Keluasan seunit (m²)</th>
-    <th>Jumlah Keluasan (m²)</th>
-  </tr>
-</thead>
-
-      <tbody id="soa-summary">
-        <tr><td colspan="4"><strong>Banglo / Berkembar / Teres</strong></td></tr>
-      </tbody>
-      <tbody>
+      <thead>
         <tr>
-          <td colspan="3" class="total">Jumlah Banglo / Berkembar / Teres (m²)</td>
-          <td class="total" id="soa-total-banglo">0.00</td>
+          <th style="width:5%">Kelas</th>
+          <th style="width:20%">Gred SSM Lama</th>
+          <th style="width:20%">Gred SSPA Baharu</th>
+          <th style="width:15%">Bilangan Kuarters</th>
+          <th style="width:13%">Keluasan (m²)</th>
+          <th style="width:13%">Keluasan (ft²)</th>
+          <th style="width:14%">Jumlah (m²)</th>
         </tr>
-      </tbody>
-      <tbody id="soa-summary-bertingkat">
-        <tr><td colspan="4"><strong>Bertingkat / Apartmen</strong></td></tr>
-      </tbody>
-      <tbody>
-        <tr>
-          <td colspan="3" class="total">Jumlah Sirkulasi dan Servis <span id="soa-extra-label">35</span>%</td>
-          <td class="total" id="soa-extra-bertingkat">0.00</td>
-        </tr>
-      </tbody>
+      </thead>
+      <tbody id="table-body-banglo"></tbody>
       <tfoot>
         <tr>
-          <td colspan="3" class="total">Jumlah Bertingkat + Sirkulasi & Servis</td>
-          <td class="total" id="soa-total-bertingkat">0.00</td>
-        </tr>
-        <tr>
-          <td colspan="3" class="total">Jumlah Keseluruhan GFA (m²)</td>
-          <td class="total" id="soa-total-keseluruhan">0.00</td>
+          <td colspan="6" class="total-label">Jumlah Keluasan Banglo/Berkembar/Teres (m²)</td>
+          <td class="total-value" id="grand-total-banglo">0.00</td>
         </tr>
       </tfoot>
     </table>
   </div>
-</div>
+  <h3 class="table-header">Bertingkat / Apartmen</h3>
+  <div class="option-container">
+    <strong>Tambah Ruang (Bertingkat):</strong>
+    <label>
+      <input type="radio" name="tambahan" value="default" checked oninput="calculateTotal('bertingkat')"> 
+      Sirkulasi 25% + Servis 10% (35%)
+    </label>
+    <label>
+      <input type="radio" name="tambahan" value="custom" onchange="calculateTotal('bertingkat')"> 
+      Custom (%)
+      <input type="number" id="customPercent" value="0" min="0" max="100" style="width: 60px; display: inline-block; margin-left:5px;" oninput="calculateTotal('bertingkat')" disabled> 
+    </label>
+    <span class="warning" id="warningText">⚠️ Melebihi 35%!</span>
+  </div>
 
-<div class="button-group">
-  <button onclick="window.print()">Cetak</button>
-  <button onclick="exportPDF()">Export ke PDF</button>
-  <button onclick="exportExcel()">Export ke Excel</button>
-</div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:5%">Kelas</th>
+          <th style="width:20%">Gred SSM Lama</th>
+          <th style="width:20%">Gred SSPA Baharu</th>
+          <th style="width:15%">Bilangan Kuarters</th>
+          <th style="width:13%">Keluasan (m²)</th>
+          <th style="width:13%">Keluasan (ft²)</th>
+          <th style="width:14%">Jumlah (m²)</th>
+        </tr>
+      </thead>
+      <tbody id="table-body-bertingkat"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="6" class="total-label">Jumlah Asas (m²)</td>
+          <td class="total-value" id="grand-total-bertingkat">0.00</td>
+        </tr>
+        <tr>
+          <td colspan="6" class="total-label" id="label-extra">Tambah (Sirkulasi & Servis 35%)</td>
+          <td class="total-value" id="extra-total">0.00</td>
+        </tr>
+        <tr style="background-color: #e8f4fc;">
+          <td colspan="6" class="total-label">Jumlah Keseluruhan (m²)</td>
+          <td class="total-value" id="final-total">0.00</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div id="printArea">
+    <h3 class="table-header" style="margin-top:0;">Ringkasan Schedule of Accommodation (SOA)</h3>
+    <div class="table-wrapper" style="border:none; box-shadow:none;">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 10%;">Kelas</th>
+            <th style="width: 15%;">Bilangan</th>
+            <th style="width: 20%;">Keluasan seunit (m²)</th>
+            <th style="width: 20%;">Keluasan seunit (ft²)</th>
+            <th style="width: 35%;">Jumlah Keluasan (m²)</th>
+          </tr>
+        </thead>
+        
+        <tbody id="soa-summary">
+          <tr style="background-color: #f1f1f1;"><td colspan="5" style="text-align: left; padding-left: 15px;"><strong>Banglo / Berkembar / Teres</strong></td></tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <td colspan="4" class="total-label">Jumlah Banglo / Berkembar / Teres (m²)</td>
+            <td class="total-value" id="soa-total-banglo">0.00</td>
+          </tr>
+        </tbody>
+
+        <tbody id="soa-summary-bertingkat">
+          <tr style="background-color: #f1f1f1;"><td colspan="5" style="text-align: left; padding-left: 15px;"><strong>Bertingkat / Apartmen</strong></td></tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <td colspan="4" class="total-label">Jumlah Sirkulasi dan Servis <span id="soa-extra-label">35</span>%</td>
+            <td class="total-value" id="soa-extra-bertingkat">0.00</td>
+          </tr>
+        </tbody>
+        
+        <tfoot>
+          <tr>
+            <td colspan="4" class="total-label">Jumlah Bertingkat + Sirkulasi & Servis</td>
+            <td class="total-value" id="soa-total-bertingkat">0.00</td>
+          </tr>
+          <tr style="border-top: 2px solid #000;">
+            <td colspan="4" class="total-label" style="font-size: 16px; text-transform: uppercase;">Jumlah Keseluruhan GFA (m²)</td>
+            <td class="total-value" id="soa-total-keseluruhan" style="font-size: 16px;">0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button class="action-btn" onclick="window.print()">Cetak</button>
+    <button class="action-btn" onclick="exportPDF()">Export ke PDF</button>
+    <button class="action-btn" onclick="exportExcel()">Export ke Excel</button>
+  </div>
 
   <script>
+    const SQFT_CONVERSION = 10.7639;
+
     const dataBanglo = [
-      { kelas: 'A', gredSsm: 'Utama B / Gred Khas B dan ke atas', gredSspa: 'JUSA B, JUSA A, Turus', keluasan: 415 },
+      { kelas: 'A', gredSsm: 'Utama B / Gred Khas B ke atas', gredSspa: 'JUSA B, JUSA A, Turus', keluasan: 415 },
       { kelas: 'B', gredSsm: 'Utama C / Gred Khas C, 53–54', gredSspa: 'Gred 14–15', keluasan: 345 },
       { kelas: 'C', gredSsm: '47–52 atau 41–46', gredSspa: 'Gred 10–13', keluasan: 290 },
       { kelas: 'D', gredSsm: '41–46 atau 31–40', gredSspa: 'Gred 9–11', keluasan: 220 },
@@ -320,17 +414,22 @@
       { kelas: 'H', gredSsm: '11–12', gredSspa: 'Gred 1', keluasan: 93 }
     ];
 
-function createRow(item, index, type) {
-  return `<tr>
-    <td>${item.kelas}</td>
-    <td>${item.gredSsm}</td>
-    <td>${item.gredSspa}</td>
-    <td><input type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0" oninput="calculateTotal('${type}')" id="qty-${type}-${index}"></td>
-    <td>${item.keluasan}</td>
-    <td id="total-${type}-${index}">0</td>
-  </tr>`;
-}
-
+    function createRow(item, index, type) {
+      const sqft = (item.keluasan * SQFT_CONVERSION).toFixed(0);
+      // Note: Input has type="number" for proper mobile keyboard
+      return `<tr>
+        <td>${item.kelas}</td>
+        <td style="font-size:13px;">${item.gredSsm}</td>
+        <td style="font-size:13px;">${item.gredSspa}</td>
+        <td>
+            <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0" 
+            oninput="calculateTotal('${type}')" id="qty-${type}-${index}">
+        </td>
+        <td>${item.keluasan}</td>
+        <td style="color:#666;">${sqft}</td>
+        <td id="total-${type}-${index}" style="font-weight:bold;">0.00</td>
+      </tr>`;
+    }
 
     const tbodyBanglo = document.getElementById('table-body-banglo');
     const tbodyBertingkat = document.getElementById('table-body-bertingkat');
@@ -338,189 +437,194 @@ function createRow(item, index, type) {
     dataBanglo.forEach((item, index) => tbodyBanglo.innerHTML += createRow(item, index, 'banglo'));
     dataBertingkat.forEach((item, index) => tbodyBertingkat.innerHTML += createRow(item, index, 'bertingkat'));
 
-   function calculateTotal(type) {
-  const data = type === 'banglo' ? dataBanglo : dataBertingkat;
-  let grandTotal = 0;
-  data.forEach((item, index) => {
-    const qty = parseInt(document.getElementById(`qty-${type}-${index}`).value) || 0;
-    const total = qty * item.keluasan;
-    document.getElementById(`total-${type}-${index}`).textContent = total.toFixed(2);
-    grandTotal += total;
-  });
+    function calculateTotal(type) {
+      const data = type === 'banglo' ? dataBanglo : dataBertingkat;
+      let grandTotal = 0;
+      
+      data.forEach((item, index) => {
+        const qtyInput = document.getElementById(`qty-${type}-${index}`);
+        let qty = parseInt(qtyInput.value);
+        if (isNaN(qty) || qty < 0) qty = 0;
+        
+        const total = qty * item.keluasan;
+        document.getElementById(`total-${type}-${index}`).textContent = total.toFixed(2);
+        grandTotal += total;
+      });
 
-  if (type === 'banglo') {
-    document.getElementById('grand-total-banglo').textContent = grandTotal.toFixed(2);
-  } else {
-    document.getElementById('grand-total-bertingkat').textContent = grandTotal.toFixed(2);
-    const isCustom = document.querySelector('input[name="tambahan"]:checked').value === 'custom';
-    const customVal = parseFloat(document.getElementById('customPercent').value || 0);
-    document.getElementById('customPercent').disabled = !isCustom;
-    const warning = document.getElementById('warningText');
-    warning.style.display = (isCustom && customVal > 35) ? 'block' : 'none';
+      if (type === 'banglo') {
+        document.getElementById('grand-total-banglo').textContent = grandTotal.toFixed(2);
+      } else {
+        document.getElementById('grand-total-bertingkat').textContent = grandTotal.toFixed(2);
+        
+        const isCustom = document.querySelector('input[name="tambahan"]:checked').value === 'custom';
+        const customInput = document.getElementById('customPercent');
+        customInput.disabled = !isCustom;
+        
+        let percent = 35;
+        if (isCustom) {
+           let customVal = parseFloat(customInput.value);
+           if(isNaN(customVal) || customVal < 0) customVal = 0;
+           percent = customVal;
+           document.getElementById('warningText').style.display = (percent > 35) ? 'inline' : 'none';
+        } else {
+           document.getElementById('warningText').style.display = 'none';
+        }
 
-    const percent = isCustom ? customVal : 35;
-    document.getElementById('label-extra').textContent = `Tambah (Sirkulasi & Servis ${percent}%)`;
-    const extra = (percent / 100) * grandTotal;
-    document.getElementById('extra-total').textContent = extra.toFixed(2);
-    document.getElementById('final-total').textContent = (grandTotal + extra).toFixed(2);
-  }
-
-  updateSOA(); // ✅ this must be here
-}
-
-
-function updateSOA() {
-  const soaTable = document.getElementById("soa-summary");
-  const soaBertingkat = document.getElementById("soa-summary-bertingkat");
-  soaTable.innerHTML = '<tr><td colspan="4"><strong>Banglo / Berkembar / Teres</strong></td></tr>';
-  soaBertingkat.innerHTML = '<tr><td colspan="4"><strong>Bertingkat / Apartmen</strong></td></tr>';
-
-  let totalBanglo = 0;
-  dataBanglo.forEach((item, index) => {
-    const qtyInput = document.getElementById(`qty-banglo-${index}`);
-    const qty = parseInt(qtyInput?.value || 0);
-    if (qty > 0) {
-      const jumlah = qty * item.keluasan;
-      totalBanglo += jumlah;
-      soaTable.innerHTML += `
-        <tr>
-          <td>${item.kelas}</td>
-          <td>${qty}</td>
-          <td>${item.keluasan.toFixed(2)}</td>
-          <td>${jumlah.toFixed(2)}</td>
-        </tr>`;
+        document.getElementById('label-extra').textContent = `Tambah (Sirkulasi & Servis ${percent}%)`;
+        const extra = (percent / 100) * grandTotal;
+        document.getElementById('extra-total').textContent = extra.toFixed(2);
+        document.getElementById('final-total').textContent = (grandTotal + extra).toFixed(2);
+      }
+      updateSOA(); 
     }
-  });
 
-  let totalBertingkat = 0;
-  dataBertingkat.forEach((item, index) => {
-    const qtyInput = document.getElementById(`qty-bertingkat-${index}`);
-    const qty = parseInt(qtyInput?.value || 0);
-    if (qty > 0) {
-      const jumlah = qty * item.keluasan;
-      totalBertingkat += jumlah;
-      soaBertingkat.innerHTML += `
-        <tr>
-          <td>${item.kelas}</td>
-          <td>${qty}</td>
-          <td>${item.keluasan.toFixed(2)}</td>
-          <td>${jumlah.toFixed(2)}</td>
-        </tr>`;
+    function updateSOA() {
+      const soaTable = document.getElementById("soa-summary");
+      const soaBertingkat = document.getElementById("soa-summary-bertingkat");
+      
+      soaTable.innerHTML = '<tr style="background-color: #f1f1f1;"><td colspan="5" style="text-align: left; padding-left: 15px;"><strong>Banglo / Berkembar / Teres</strong></td></tr>';
+      soaBertingkat.innerHTML = '<tr style="background-color: #f1f1f1;"><td colspan="5" style="text-align: left; padding-left: 15px;"><strong>Bertingkat / Apartmen</strong></td></tr>';
+
+      let totalBanglo = 0;
+      dataBanglo.forEach((item, index) => {
+        const qty = parseInt(document.getElementById(`qty-banglo-${index}`).value) || 0;
+        if (qty > 0) {
+          const jumlah = qty * item.keluasan;
+          totalBanglo += jumlah;
+          const sqft = (item.keluasan * SQFT_CONVERSION).toFixed(0);
+          soaTable.innerHTML += `
+            <tr>
+              <td>${item.kelas}</td>
+              <td>${qty}</td>
+              <td>${item.keluasan.toFixed(2)}</td>
+              <td>${sqft}</td>
+              <td>${jumlah.toFixed(2)}</td>
+            </tr>`;
+        }
+      });
+
+      let totalBertingkat = 0;
+      dataBertingkat.forEach((item, index) => {
+        const qty = parseInt(document.getElementById(`qty-bertingkat-${index}`).value) || 0;
+        if (qty > 0) {
+          const jumlah = qty * item.keluasan;
+          totalBertingkat += jumlah;
+          const sqft = (item.keluasan * SQFT_CONVERSION).toFixed(0);
+          soaBertingkat.innerHTML += `
+            <tr>
+              <td>${item.kelas}</td>
+              <td>${qty}</td>
+              <td>${item.keluasan.toFixed(2)}</td>
+              <td>${sqft}</td>
+              <td>${jumlah.toFixed(2)}</td>
+            </tr>`;
+        }
+      });
+
+      const isCustom = document.querySelector('input[name="tambahan"]:checked').value === 'custom';
+      const customVal = parseFloat(document.getElementById('customPercent').value) || 0;
+      const percent = isCustom ? customVal : 35;
+      const extra = (percent / 100) * totalBertingkat;
+      const totalKeseluruhan = totalBanglo + totalBertingkat + extra;
+
+      document.getElementById('soa-total-banglo').textContent = totalBanglo.toFixed(2);
+      document.getElementById('soa-extra-bertingkat').textContent = extra.toFixed(2);
+      document.getElementById('soa-extra-label').textContent = percent;
+      document.getElementById('soa-total-bertingkat').textContent = (totalBertingkat + extra).toFixed(2);
+      document.getElementById('soa-total-keseluruhan').textContent = totalKeseluruhan.toFixed(2);
     }
-  });
 
-  const isCustom = document.querySelector('input[name="tambahan"]:checked').value === 'custom';
-  const customVal = parseFloat(document.getElementById('customPercent').value || 0);
-  const percent = isCustom ? customVal : 35;
-  const extra = (percent / 100) * totalBertingkat;
-  const totalKeseluruhan = totalBertingkat + extra;
+    function exportPDF() {
+      const printArea = document.getElementById("printArea");
+      if(typeof html2canvas === 'undefined') { alert("Library PDF belum dimuatkan."); return; }
+      
+      html2canvas(printArea, { scale: 2 }).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+        const imgWidth = 190;
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        pdf.setFontSize(14);
+        pdf.text("Ringkasan Schedule of Accommodation (SOA)", 10, 15);
+        pdf.addImage(imgData, "PNG", 10, 20, imgWidth, imgHeight);
+        const now = new Date().toLocaleDateString("ms-MY").replace(/\//g, '-');
+        pdf.save(`Ringkasan_SOA_${now}.pdf`);
+      });
+    }
 
-  document.getElementById('soa-total-banglo').textContent = totalBanglo.toFixed(2);
-  document.getElementById('soa-extra-bertingkat').textContent = extra.toFixed(2);
-  document.getElementById('soa-extra-label').textContent = percent;
-  document.getElementById('soa-total-bertingkat').textContent = totalKeseluruhan.toFixed(2);
-  document.getElementById('soa-total-keseluruhan').textContent = (totalBanglo + totalKeseluruhan).toFixed(2);
-}
+    function exportExcel() {
+      const printArea = document.getElementById("printArea");
+      const table = printArea.querySelector("table");
+      if(typeof XLSX === 'undefined') { alert("Library Excel belum dimuatkan."); return; }
 
+      const wb = XLSX.utils.book_new();
+      const ws_data = [];
+      const today = new Date().toLocaleDateString("ms-MY");
+      ws_data.push(["Ringkasan Schedule of Accommodation (SOA)"]);
+      ws_data.push(["Tarikh:", today]);
+      ws_data.push([]);
 
-    calculateTotal('banglo');
-    calculateTotal('bertingkat');
+      const headers = Array.from(table.querySelectorAll("thead tr th")).map(th => th.textContent.trim());
+      ws_data.push(headers);
+
+      const rows = table.querySelectorAll("tbody tr");
+      rows.forEach(row => {
+         const cols = [];
+         row.querySelectorAll("td").forEach(td => cols.push(td.textContent.trim()));
+         ws_data.push(cols);
+      });
+      
+      const footers = table.querySelectorAll("tfoot tr");
+      footers.forEach(row => {
+         const cols = [];
+         const label = row.querySelector(".total-label").textContent.trim();
+         const value = row.querySelector(".total-value").textContent.trim();
+         // Simple formatting for Excel footer
+         cols.push(label, "", "", "", value); 
+         ws_data.push(cols);
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+      XLSX.utils.book_append_sheet(wb, ws, "Ringkasan SOA");
+      XLSX.writeFile(wb, "Ringkasan_SOA.xlsx");
+    }
+
+    function resetForm() {
+      if (confirm("Adakah anda pasti mahu mengosongkan semua data?")) {
+        localStorage.removeItem("kuartersData");
+        dataBanglo.forEach((_, i) => document.getElementById(`qty-banglo-${i}`).value = 0);
+        dataBertingkat.forEach((_, i) => document.getElementById(`qty-bertingkat-${i}`).value = 0);
+        
+        document.querySelector('input[name="tambahan"][value="default"]').checked = true;
+        document.getElementById('customPercent').value = 0;
+        document.getElementById('customPercent').disabled = true;
+        
+        calculateTotal('banglo');
+        calculateTotal('bertingkat');
+      }
+    }
+
+    window.addEventListener("beforeunload", () => {
+      const data = { banglo: [], bertingkat: [] };
+      dataBanglo.forEach((_, i) => data.banglo.push(document.getElementById(`qty-banglo-${i}`).value));
+      dataBertingkat.forEach((_, i) => data.bertingkat.push(document.getElementById(`qty-bertingkat-${i}`).value));
+      localStorage.setItem("kuartersData", JSON.stringify(data));
+    });
+
+    window.addEventListener("load", () => {
+      const saved = JSON.parse(localStorage.getItem("kuartersData"));
+      if (saved) {
+        saved.banglo.forEach((val, i) => document.getElementById(`qty-banglo-${i}`).value = val);
+        saved.bertingkat.forEach((val, i) => document.getElementById(`qty-bertingkat-${i}`).value = val);
+      }
+      calculateTotal('banglo');
+      calculateTotal('bertingkat');
+    });
   </script>
 
-<!-- CDN diperlukan -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<script>
-function exportPDF() {
-  const printArea = document.getElementById("printArea");
-  html2canvas(printArea, { scale: 2 }).then(canvas => {
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jspdf.jsPDF("p", "mm", "a4");
-
-    const imgWidth = 190;
-    const imgHeight = canvas.height * imgWidth / canvas.width;
-
-    pdf.setFontSize(14);
-    pdf.text("Ringkasan Schedule of Accommodation (SOA)", 10, 15);
-    pdf.addImage(imgData, "PNG", 10, 20, imgWidth, imgHeight);
-
-    const now = new Date().toLocaleDateString("ms-MY").replace(/\//g, '-');
-    pdf.save(`Ringkasan_SOA_${now}.pdf`);
-  });
-}
-
-function exportExcel() {
-  const printArea = document.getElementById("printArea");
-  const table = printArea.querySelector("table");
-
-  const wb = XLSX.utils.book_new();
-  const ws_data = [];
-
-  const today = new Date().toLocaleDateString("ms-MY");
-  ws_data.push(["Ringkasan Schedule of Accommodation (SOA)"]);
-  ws_data.push(["Tarikh:", today]);
-  ws_data.push([]);
-
-  const headers = Array.from(table.querySelectorAll("thead tr th")).map(th => th.textContent.trim());
-  ws_data.push(headers);
-
-  const rows = table.querySelectorAll("tbody tr, tfoot tr");
-  rows.forEach(row => {
-    const cols = Array.from(row.querySelectorAll("td")).map(td => td.textContent.trim());
-    ws_data.push(cols);
-  });
-
-  const ws = XLSX.utils.aoa_to_sheet(ws_data);
-  XLSX.utils.book_append_sheet(wb, ws, "Ringkasan SOA");
-  XLSX.writeFile(wb, "Ringkasan_SOA.xlsx");
-}
-
-
-window.addEventListener("beforeunload", () => {
-  const data = { banglo: [], bertingkat: [] };
-  dataBanglo.forEach((_, i) => data.banglo.push(document.getElementById(`qty-banglo-${i}`).value));
-  dataBertingkat.forEach((_, i) => data.bertingkat.push(document.getElementById(`qty-bertingkat-${i}`).value));
-  localStorage.setItem("kuartersData", JSON.stringify(data));
-});
-
-window.addEventListener("load", () => {
-  const saved = JSON.parse(localStorage.getItem("kuartersData"));
-  if (saved) {
-    saved.banglo.forEach((val, i) => document.getElementById(`qty-banglo-${i}`).value = val);
-    saved.bertingkat.forEach((val, i) => document.getElementById(`qty-bertingkat-${i}`).value = val);
-    calculateTotal('banglo');
-    calculateTotal('bertingkat');
-  }
-});
-
-function resetForm() {
-  if (confirm("Adakah anda pasti mahu mengosongkan semua data?")) {
-    localStorage.removeItem("kuartersData");
-
-    // Reset semua input ke 0
-    dataBanglo.forEach((_, i) => {
-      document.getElementById(`qty-banglo-${i}`).value = 0;
-    });
-    dataBertingkat.forEach((_, i) => {
-      document.getElementById(`qty-bertingkat-${i}`).value = 0;
-    });
-
-    // Reset peratus tambahan ke default
-    document.querySelector('input[name="tambahan"][value="default"]').checked = true;
-    document.getElementById('customPercent').value = 0;
-    document.getElementById('customPercent').disabled = true;
-
-    // Kira semula
-    calculateTotal('banglo');
-    calculateTotal('bertingkat');
-  }
-}
-
-
-
-
-</script>
 </body>
 </html>
